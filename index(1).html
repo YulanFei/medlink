@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediLink Shanghai — Expert Medical Navigation for International Patients</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=Noto+Serif+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0B1F3A;
+    --navy-mid: #122848;
+    --navy-light: #1B3A5C;
+    --gold: #C8A96E;
+    --gold-light: #E2C99A;
+    --cream: #F8F4EE;
+    --cream-dark: #EDE8DF;
+    --white: #FFFFFF;
+    --text: #1A1A2E;
+    --text-mid: #4A5568;
+    --text-light: #718096;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', 'Noto Serif SC', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* ── LANGUAGE TOGGLE ── */
+  .lang-toggle {
+    position: fixed; top: 1.2rem; right: 5vw; z-index: 200;
+    display: flex; align-items: center;
+    background: rgba(11,31,58,0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(200,169,110,0.25);
+    overflow: hidden;
+  }
+  .lang-btn {
+    padding: 0.42rem 0.9rem;
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.1em;
+    cursor: pointer; border: none; background: transparent;
+    color: rgba(255,255,255,0.45);
+    transition: all 0.2s; font-family: inherit;
+    text-transform: uppercase;
+  }
+  .lang-btn.active {
+    background: var(--gold);
+    color: var(--navy);
+  }
+  .lang-divider {
+    width: 1px; height: 20px;
+    background: rgba(200,169,110,0.2); flex-shrink: 0;
+  }
+
+  /* ── LANGUAGE CONTENT ── */
+  [data-lang] { display: none; }
+  body.lang-en [data-lang="en"] { display: contents; }
+  body.lang-zh [data-lang="zh"] { display: contents; }
+  body.lang-en .en-inline { display: inline; }
+  body.lang-zh .en-inline { display: none; }
+  body.lang-en .zh-inline { display: none; }
+  body.lang-zh .zh-inline { display: inline; }
+
+  /* For block elements that need to switch */
+  .en-block { display: none; }
+  .zh-block { display: none; }
+  body.lang-en .en-block { display: block; }
+  body.lang-zh .zh-block { display: block; }
+
+  /* Chinese font override */
+  body.lang-zh .section-title,
+  body.lang-zh .hero-title,
+  body.lang-zh .svc-title,
+  body.lang-zh .why-card-title,
+  body.lang-zh .step-title,
+  body.lang-zh .hosp-name,
+  body.lang-zh .footer-logo-name {
+    font-family: 'Noto Serif SC', serif;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 5vw;
+    background: rgba(11, 31, 58, 0.96);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(200, 169, 110, 0.2);
+  }
+  .nav-logo { display: flex; flex-direction: column; line-height: 1; }
+  .nav-logo-en {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem; font-weight: 500; letter-spacing: 0.05em;
+    color: var(--white);
+  }
+  .nav-logo-sub {
+    font-size: 0.6rem; font-weight: 300; letter-spacing: 0.22em;
+    color: var(--gold); text-transform: uppercase; margin-top: 2px;
+  }
+  .nav-links { display: flex; gap: 2rem; align-items: center; padding-right: 8rem; }
+  .nav-links a {
+    font-size: 0.78rem; font-weight: 400; letter-spacing: 0.1em;
+    text-transform: uppercase; color: rgba(255,255,255,0.7);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-cta {
+    background: var(--gold) !important; color: var(--navy) !important;
+    padding: 0.5rem 1.3rem; font-weight: 500 !important;
+  }
+  .nav-cta:hover { background: var(--gold-light) !important; }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh; background: var(--navy);
+    position: relative; display: flex; align-items: center; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 80% at 70% 50%, rgba(27,58,92,0.7) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(200,169,110,0.08) 0%, transparent 60%);
+  }
+  .hero-bg::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(200,169,110,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,169,110,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .hero-circle {
+    position: absolute; right: -8vw; top: 50%; transform: translateY(-50%);
+    width: 55vw; height: 55vw; max-width: 700px; max-height: 700px;
+    border-radius: 50%; border: 1px solid rgba(200,169,110,0.12); pointer-events: none;
+  }
+  .hero-circle::before {
+    content: ''; position: absolute; inset: 8%; border-radius: 50%;
+    border: 1px solid rgba(200,169,110,0.08);
+  }
+  .hero-circle::after {
+    content: ''; position: absolute; inset: 20%; border-radius: 50%;
+    border: 1px solid rgba(200,169,110,0.06);
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    padding: 8rem 5vw 7rem; max-width: 720px;
+  }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    font-size: 0.7rem; font-weight: 500; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 1.8rem;
+  }
+  .hero-tag::before { content: ''; display: block; width: 28px; height: 1px; background: var(--gold); }
+  .hero-title {
+    font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+    font-size: clamp(2.8rem, 5.5vw, 4.5rem);
+    font-weight: 300; line-height: 1.12;
+    color: var(--white); margin-bottom: 1.6rem;
+  }
+  .hero-title em { font-style: italic; color: var(--gold); }
+  .hero-body {
+    font-size: 1rem; font-weight: 300; line-height: 1.85;
+    color: rgba(255,255,255,0.62); max-width: 520px; margin-bottom: 2.8rem;
+  }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--gold); color: var(--navy);
+    padding: 0.9rem 2rem; font-family: inherit;
+    font-size: 0.82rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; text-decoration: none; transition: all 0.25s;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: transparent; color: rgba(255,255,255,0.8);
+    border: 1px solid rgba(255,255,255,0.25);
+    padding: 0.9rem 2rem; font-family: inherit;
+    font-size: 0.82rem; font-weight: 400; letter-spacing: 0.1em;
+    text-transform: uppercase; text-decoration: none; transition: all 0.25s;
+  }
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-1px); }
+
+  .hero-trust {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(255,255,255,0.04);
+    border-top: 1px solid rgba(200,169,110,0.15);
+    padding: 1.2rem 5vw;
+    display: flex; gap: 3rem; align-items: center; overflow-x: auto;
+  }
+  .trust-item { display: flex; flex-direction: column; white-space: nowrap; flex-shrink: 0; }
+  .trust-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem; font-weight: 400; color: var(--gold); line-height: 1;
+  }
+  .trust-label {
+    font-size: 0.65rem; font-weight: 400; letter-spacing: 0.1em;
+    text-transform: uppercase; color: rgba(255,255,255,0.4); margin-top: 3px;
+  }
+  .trust-divider { width: 1px; height: 36px; background: rgba(200,169,110,0.2); flex-shrink: 0; }
+
+  /* ── SECTION BASE ── */
+  section { padding: 7rem 5vw; }
+  .section-tag {
+    font-size: 0.68rem; font-weight: 500; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem;
+  }
+  .section-tag::before { content: ''; display: block; width: 24px; height: 1px; background: var(--gold); }
+  .section-title {
+    font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 300; line-height: 1.2; color: var(--navy); margin-bottom: 1.2rem;
+  }
+  .section-title em { font-style: italic; color: var(--gold); }
+  .section-body {
+    font-size: 0.95rem; font-weight: 300; line-height: 1.9;
+    color: var(--text-mid); max-width: 560px;
+  }
+
+  /* ── WHY ── */
+  #why { background: var(--white); }
+  .why-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 5rem; align-items: center; margin-top: 4rem;
+  }
+  .why-cards { display: flex; flex-direction: column; gap: 1.2rem; }
+  .why-card {
+    padding: 1.6rem 1.8rem;
+    border: 1px solid var(--cream-dark);
+    border-left: 3px solid var(--gold);
+    background: var(--cream); transition: all 0.25s;
+  }
+  .why-card:hover { box-shadow: 0 8px 30px rgba(11,31,58,0.08); transform: translateX(4px); }
+  .why-card-title {
+    font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+    font-size: 1.15rem; font-weight: 500; color: var(--navy); margin-bottom: 0.5rem;
+  }
+  .why-card-body { font-size: 0.85rem; font-weight: 300; line-height: 1.75; color: var(--text-mid); }
+  .why-visual {
+    position: relative; background: var(--navy); padding: 3rem;
+    min-height: 420px; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden;
+  }
+  .why-visual::before {
+    content: ''; position: absolute; top: -30%; right: -20%;
+    width: 80%; height: 80%; border-radius: 50%;
+    border: 1px solid rgba(200,169,110,0.15);
+  }
+  .why-visual-quote {
+    position: relative; z-index: 2;
+    font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+    font-size: 1.4rem; font-weight: 300; font-style: italic;
+    line-height: 1.6; color: var(--white); margin-bottom: 1.5rem;
+  }
+  .why-visual-quote::before {
+    content: '\201C'; font-size: 5rem; color: var(--gold); opacity: 0.4;
+    position: absolute; top: -2rem; left: -0.5rem; font-style: normal; line-height: 1;
+  }
+  .why-visual-attr { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); }
+  .why-visual-hospitals {
+    position: absolute; top: 2rem; right: 2rem;
+    display: flex; flex-direction: column; gap: 0.4rem; z-index: 2; text-align: right;
+  }
+  .hospital-chip {
+    display: inline-block; padding: 0.25rem 0.7rem;
+    background: rgba(200,169,110,0.12); border: 1px solid rgba(200,169,110,0.3);
+    font-size: 0.68rem; letter-spacing: 0.08em; color: var(--gold-light);
+  }
+
+  /* ── SERVICES ── */
+  #services { background: var(--cream); }
+  .services-header {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; margin-bottom: 4rem; align-items: end;
+  }
+  .services-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px; background: var(--cream-dark);
+  }
+  .service-card {
+    background: var(--white); padding: 2.4rem 2rem;
+    transition: all 0.3s; position: relative; overflow: hidden;
+  }
+  .service-card::before {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+    height: 2px; background: var(--gold);
+    transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
+  }
+  .service-card:hover { background: var(--navy); }
+  .service-card:hover::before { transform: scaleX(1); }
+  .service-card:hover .svc-num { color: rgba(200,169,110,0.2); }
+  .service-card:hover .svc-title { color: var(--white); }
+  .service-card:hover .svc-body { color: rgba(255,255,255,0.5); }
+  .service-card:hover .svc-price { color: var(--gold); }
+  .svc-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem; font-weight: 300; line-height: 1;
+    color: var(--cream-dark); margin-bottom: 1rem; transition: color 0.3s;
+  }
+  .svc-title {
+    font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+    font-size: 1.2rem; font-weight: 500; color: var(--navy);
+    margin-bottom: 0.8rem; transition: color 0.3s;
+  }
+  .svc-body {
+    font-size: 0.82rem; font-weight: 300; line-height: 1.8;
+    color: var(--text-mid); margin-bottom: 1.2rem; transition: color 0.3s;
+  }
+  .svc-price {
+    font-size: 0.7rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--gold); transition: color 0.3s;
+  }
+
+  /* ── PROCESS ── */
+  #process { background: var(--navy); }
+  #process .section-title { color: var(--white); }
+  #process .section-body { color: rgba(255,255,255,0.5); }
+  .process-steps {
+    margin-top: 4rem; display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 0; position: relative;
+  }
+  .process-steps::before {
+    content: ''; position: absolute; top: 2rem; left: 10%; right: 10%;
+    height: 1px; background: rgba(200,169,110,0.2); z-index: 0;
+  }
+  .process-step { padding: 0 1.2rem; text-align: center; position: relative; z-index: 1; }
+  .step-dot {
+    width: 4rem; height: 4rem; border-radius: 50%;
+    border: 1px solid rgba(200,169,110,0.35);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem; background: var(--navy);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem; font-weight: 400; color: var(--gold); transition: all 0.3s;
+  }
+  .process-step:hover .step-dot { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+  .step-title {
+    font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+    font-size: 1rem; font-weight: 500; color: var(--white); margin-bottom: 0.6rem;
+  }
+  .step-body { font-size: 0.75rem; font-weight: 300; line-height: 1.7; color: rgba(255,255,255,0.4); }
+
+  /* ── HOSPITALS ── */
+  #hospitals { background: var(--white); }
+  .hospitals-intro {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 5rem; align-items: center; margin-bottom: 4rem;
+  }
+  .hospitals-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: var(--cream-dark);
+  }
+  .hospital-card { background: var(--cream); padding: 1.6rem 1.4rem; transition: all 0.25s; }
+  .hospital-card:hover { background: var(--navy); }
+  .hospital-card:hover .hosp-name { color: var(--white); }
+  .hospital-card:hover .hosp-spec { color: var(--gold); }
+  .hosp-icon { width: 32px; height: 2px; background: var(--gold); margin-bottom: 1rem; }
+  .hosp-name {
+    font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+    font-size: 0.95rem; font-weight: 500; color: var(--navy);
+    margin-bottom: 0.4rem; transition: color 0.25s; line-height: 1.3;
+  }
+  .hosp-spec { font-size: 0.7rem; font-weight: 300; color: var(--text-light); transition: color 0.25s; }
+
+  /* ── CONTACT ── */
+  #contact { background: var(--navy); position: relative; overflow: hidden; }
+  #contact::before {
+    content: ''; position: absolute; top: -50%; right: -20%;
+    width: 70vw; height: 70vw; max-width: 800px; max-height: 800px;
+    border-radius: 50%; border: 1px solid rgba(200,169,110,0.08); pointer-events: none;
+  }
+  .contact-inner {
+    position: relative; z-index: 1;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 6rem; align-items: start;
+  }
+  #contact .section-title { color: var(--white); }
+  #contact .section-body { color: rgba(255,255,255,0.5); margin-bottom: 2.5rem; }
+  .contact-details { display: flex; flex-direction: column; gap: 1.5rem; }
+  .contact-item {
+    display: flex; align-items: flex-start; gap: 1rem;
+    padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .contact-item:last-child { border-bottom: none; }
+  .contact-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid rgba(200,169,110,0.3);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .contact-icon svg { width: 14px; height: 14px; stroke: var(--gold); fill: none; stroke-width: 1.5; }
+  .contact-label {
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 0.25rem;
+  }
+  .contact-value { font-size: 0.88rem; font-weight: 300; color: rgba(255,255,255,0.8); line-height: 1.5; }
+  .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-label {
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.15em;
+    text-transform: uppercase; color: rgba(255,255,255,0.4);
+  }
+  .form-input, .form-select, .form-textarea {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    padding: 0.8rem 1rem; font-family: inherit;
+    font-size: 0.88rem; font-weight: 300; color: var(--white);
+    transition: border-color 0.2s; width: 100%;
+  }
+  .form-input::placeholder, .form-textarea::placeholder { color: rgba(255,255,255,0.25); }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--gold); }
+  .form-select { appearance: none; cursor: pointer; color: rgba(255,255,255,0.7); }
+  .form-select option { background: var(--navy); }
+  .form-textarea { resize: vertical; min-height: 110px; }
+  .form-note { font-size: 0.72rem; font-weight: 300; color: rgba(255,255,255,0.3); line-height: 1.6; }
+  .form-submit {
+    background: var(--gold); color: var(--navy); border: none;
+    padding: 1rem 2.5rem; font-family: inherit;
+    font-size: 0.8rem; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; cursor: pointer; transition: all 0.25s; align-self: flex-start;
+  }
+  .form-submit:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #060F1C; padding: 2rem 5vw;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 1rem;
+    border-top: 1px solid rgba(200,169,110,0.1);
+  }
+  .footer-logo { display: flex; flex-direction: column; }
+  .footer-logo-name {
+    font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+    font-size: 1.1rem; font-weight: 400; color: var(--white);
+  }
+  .footer-logo-sub { font-size: 0.6rem; letter-spacing: 0.15em; color: var(--gold); margin-top: 2px; }
+  .footer-copy { font-size: 0.7rem; font-weight: 300; color: rgba(255,255,255,0.3); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero-tag    { animation: fadeUp 0.6s ease both; animation-delay: 0.1s; }
+  .hero-title  { animation: fadeUp 0.7s ease both; animation-delay: 0.25s; }
+  .hero-body   { animation: fadeUp 0.7s ease both; animation-delay: 0.4s; }
+  .hero-actions { animation: fadeUp 0.7s ease both; animation-delay: 0.55s; }
+  .hero-trust  { animation: fadeUp 0.6s ease both; animation-delay: 0.7s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .nav-links { display: none; }
+    .why-grid, .services-header, .hospitals-intro, .contact-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+    .services-grid { grid-template-columns: 1fr 1fr; }
+    .process-steps { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .process-steps::before { display: none; }
+    .hospitals-grid { grid-template-columns: 1fr 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .lang-toggle { top: auto; bottom: 1.5rem; right: 1.5rem; }
+  }
+  @media (max-width: 600px) {
+    .services-grid, .hospitals-grid, .process-steps { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body class="lang-en">
+
+<!-- LANGUAGE TOGGLE -->
+<div class="lang-toggle">
+  <button class="lang-btn active" onclick="setLang('en')">EN</button>
+  <div class="lang-divider"></div>
+  <button class="lang-btn" onclick="setLang('zh')">中文</button>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <span class="nav-logo-en">MediLink Shanghai</span>
+    <span class="nav-logo-sub">沪医通 · Medical Navigation</span>
+  </div>
+  <div class="nav-links">
+    <a href="#why"><span class="en-inline">Why Us</span><span class="zh-inline">为什么选我们</span></a>
+    <a href="#services"><span class="en-inline">Services</span><span class="zh-inline">服务项目</span></a>
+    <a href="#process"><span class="en-inline">Process</span><span class="zh-inline">服务流程</span></a>
+    <a href="#hospitals"><span class="en-inline">Hospitals</span><span class="zh-inline">合作医院</span></a>
+    <a href="#contact" class="nav-cta">
+      <span class="en-inline">Request Consultation</span>
+      <span class="zh-inline">预约咨询</span>
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-circle"></div>
+  <div class="hero-content">
+    <div class="hero-tag">
+      <span class="en-inline">Shanghai's Premier Medical Navigation Service</span>
+      <span class="zh-inline">上海顶级外籍患者医疗协调服务</span>
+    </div>
+    <h1 class="hero-title">
+      <span class="en-block">World-class expertise.<br><em>No barriers.</em></span>
+      <span class="zh-block">顶尖专家，<br><em>触手可及。</em></span>
+    </h1>
+    <p class="hero-body">
+      <span class="en-inline">When your diagnosis demands the very best, we connect international patients directly to Shanghai's top specialists at China's leading public hospitals — managing every detail from initial consultation to discharge.</span>
+      <span class="zh-inline">当您的病情需要最权威的诊断与治疗，我们帮助外籍患者直接对接上海公立三甲医院顶级专家，从首次咨询到出院随访，全程专业陪护，一人负责到底。</span>
+    </p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">
+        <span class="en-inline">Request a Consultation →</span>
+        <span class="zh-inline">立即预约咨询 →</span>
+      </a>
+      <a href="#services" class="btn-secondary">
+        <span class="en-inline">Our Services</span>
+        <span class="zh-inline">了解服务</span>
+      </a>
+    </div>
+  </div>
+  <div class="hero-trust">
+    <div class="trust-item">
+      <span class="trust-num">100%</span>
+      <span class="trust-label"><span class="en-inline">Top-tier public hospitals</span><span class="zh-inline">公立三甲全覆盖</span></span>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <span class="trust-num"><span class="en-inline">All</span><span class="zh-inline">全部</span></span>
+      <span class="trust-label"><span class="en-inline">Class-A tertiary hospitals</span><span class="zh-inline">上海三甲医院</span></span>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <span class="trust-num">24h</span>
+      <span class="trust-label"><span class="en-inline">Dedicated case manager</span><span class="zh-inline">专属病例协调员</span></span>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <span class="trust-num"><span class="en-inline">End-to-end</span><span class="zh-inline">全程</span></span>
+      <span class="trust-label"><span class="en-inline">Medical coordination</span><span class="zh-inline">医疗管理服务</span></span>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why">
+  <div class="section-tag"><span class="en-inline">Why MediLink</span><span class="zh-inline">为什么选择沪医通</span></div>
+  <div class="why-grid">
+    <div class="why-cards">
+      <h2 class="section-title">
+        <span class="en-block">The bridge between <em>you</em> and China's finest specialists</span>
+        <span class="zh-block">连接您与<em>中国顶级专家</em>的桥梁</span>
+      </h2>
+      <p class="section-body" style="margin-bottom:2rem">
+        <span class="en-inline">Shanghai's public hospitals house physicians who are world leaders in oncology, neurology, cardiology, and more. The challenge for international patients has never been quality — it has been access.</span>
+        <span class="zh-inline">上海公立三甲医院汇聚了肿瘤、神经、心血管等领域的世界级权威专家。对外籍患者而言，真正的挑战从来不是医疗质量，而是如何进入这个体系。</span>
+      </p>
+      <div class="why-card">
+        <div class="why-card-title"><span class="en-inline">Direct specialist access</span><span class="zh-inline">直达顶级专家</span></div>
+        <div class="why-card-body"><span class="en-inline">We hold established relationships with leading physicians across every major tertiary hospital in Shanghai. Your case reaches the right expert — not a general clinic.</span><span class="zh-inline">我们与上海各大三甲医院顶级专家建立了深度合作关系，确保您的病情直达最合适的权威医生，而非普通门诊。</span></div>
+      </div>
+      <div class="why-card">
+        <div class="why-card-title"><span class="en-inline">Full-language care coordination</span><span class="zh-inline">全程语言无障碍</span></div>
+        <div class="why-card-body"><span class="en-inline">From your overseas medical records through discharge documents, every interaction is managed in your language. No medical detail is lost in translation.</span><span class="zh-inline">从海外病历翻译到出院文件整理，每一个医疗细节都以您的语言全程跟进，确保零信息损失。</span></div>
+      </div>
+      <div class="why-card">
+        <div class="why-card-title"><span class="en-inline">End-to-end case management</span><span class="zh-inline">一人全程负责</span></div>
+        <div class="why-card-body"><span class="en-inline">One dedicated coordinator. From pre-arrival planning and visa support to bedside presence and insurance documentation.</span><span class="zh-inline">专属协调员全程负责：从来沪行程规划、签证材料准备，到床旁陪同、保险理赔，一人到底。</span></div>
+      </div>
+      <div class="why-card">
+        <div class="why-card-title"><span class="en-inline">Fraction of Western costs</span><span class="zh-inline">费用仅为西方国家的20-30%</span></div>
+        <div class="why-card-body"><span class="en-inline">World-class treatment at China's premier public hospitals — typically 20–30% of equivalent private Western care costs, without compromising on expertise.</span><span class="zh-inline">在中国顶级公立医院接受世界级治疗，费用通常仅为欧美同等私立医疗的20-30%，专业水准分毫不减。</span></div>
+      </div>
+    </div>
+    <div class="why-visual">
+      <div class="why-visual-hospitals">
+        <span class="hospital-chip">华山医院</span>
+        <span class="hospital-chip">瑞金医院</span>
+        <span class="hospital-chip">中山医院</span>
+        <span class="hospital-chip">仁济医院</span>
+        <span class="hospital-chip">+ 全部三甲</span>
+      </div>
+      <div class="why-visual-quote">
+        <span class="en-inline">Shanghai's medical expertise has made it the destination of choice for complex international cases.</span>
+        <span class="zh-inline">上海医疗技术水平已使其成为全球疑难病患的首选就医目的地。</span>
+      </div>
+      <div class="why-visual-attr"><span class="en-inline">Shanghai Municipal Health Commission</span><span class="zh-inline">上海市卫生健康委员会</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="services-header">
+    <div>
+      <div class="section-tag"><span class="en-inline">What We Offer</span><span class="zh-inline">服务项目</span></div>
+      <h2 class="section-title">
+        <span class="en-block">Services tailored to <em>complex cases</em></span>
+        <span class="zh-block">专为<em>疑难病患</em>设计的服务</span>
+      </h2>
+    </div>
+    <p class="section-body">
+      <span class="en-inline">We specialize in patients who need more than a standard appointment. Our services are designed for complex diagnoses, second opinions, and cases where the stakes are high.</span>
+      <span class="zh-inline">我们专注于需要超越普通就诊的患者。我们的服务专为疑难诊断、寻求第二意见及高风险病例而设计。</span>
+    </p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="svc-num">01</div>
+      <div class="svc-title"><span class="en-inline">Complex Case Management</span><span class="zh-inline">疑难病例全程管理</span></div>
+      <div class="svc-body"><span class="en-inline">Comprehensive end-to-end coordination for difficult diagnoses. Medical record translation, expert matching, full-stay accompaniment, and post-discharge follow-up.</span><span class="zh-inline">针对疑难诊断的全程协调服务。病历翻译、专家匹配、住院全程陪同、出院后随访，一站式覆盖。</span></div>
+      <div class="svc-price"><span class="en-inline">From ¥30,000 per case</span><span class="zh-inline">每案例起价 ¥30,000</span></div>
+    </div>
+    <div class="service-card">
+      <div class="svc-num">02</div>
+      <div class="svc-title"><span class="en-inline">Expert Specialist Access</span><span class="zh-inline">顶级专家优先通道</span></div>
+      <div class="svc-body"><span class="en-inline">Priority access to Shanghai's top specialists. We match your condition to the precise physician whose expertise is most relevant, bypassing standard queues.</span><span class="zh-inline">优先预约上海顶级专家门诊。我们根据您的病情精准匹配最权威的医生，无需经历漫长的普通挂号流程。</span></div>
+      <div class="svc-price"><span class="en-inline">From ¥5,000 per visit</span><span class="zh-inline">每次起价 ¥5,000</span></div>
+    </div>
+    <div class="service-card">
+      <div class="svc-num">03</div>
+      <div class="svc-title"><span class="en-inline">Second Medical Opinion</span><span class="zh-inline">第二诊疗意见</span></div>
+      <div class="svc-body"><span class="en-inline">Bring your existing diagnosis and imaging. A leading Chinese specialist will review your case in full and provide an independent assessment and treatment recommendation.</span><span class="zh-inline">携带已有诊断和影像资料，由中国顶级专家对您的病例进行全面评估，提供独立的治疗建议。</span></div>
+      <div class="svc-price"><span class="en-inline">From ¥8,000</span><span class="zh-inline">起价 ¥8,000</span></div>
+    </div>
+    <div class="service-card">
+      <div class="svc-num">04</div>
+      <div class="svc-title"><span class="en-inline">Corporate Health Program</span><span class="zh-inline">企业员工医疗保障</span></div>
+      <div class="svc-body"><span class="en-inline">Annual medical navigation packages for international companies. Ensure your expatriate employees and families receive seamless healthcare access when they need it most.</span><span class="zh-inline">为外资企业提供年度员工医疗协调服务包，确保您的外籍员工及家属在需要时获得无缝的医疗支持。</span></div>
+      <div class="svc-price"><span class="en-inline">From ¥3,000 per employee/year</span><span class="zh-inline">每人每年起价 ¥3,000</span></div>
+    </div>
+    <div class="service-card">
+      <div class="svc-num">05</div>
+      <div class="svc-title"><span class="en-inline">International Referral Partner</span><span class="zh-inline">海外转诊合作</span></div>
+      <div class="svc-body"><span class="en-inline">For overseas physicians and clinics. We act as your trusted Shanghai extension — accepting referrals, coordinating care, and providing detailed clinical feedback to your team.</span><span class="zh-inline">面向海外医生及诊所。我们作为您在上海的专业延伸，接受转诊、协调治疗，并向您的团队提供详尽的临床反馈。</span></div>
+      <div class="svc-price"><span class="en-inline">Case-by-case pricing</span><span class="zh-inline">按案例定价</span></div>
+    </div>
+    <div class="service-card">
+      <div class="svc-num">06</div>
+      <div class="svc-title"><span class="en-inline">Insurance Coordination</span><span class="zh-inline">国际保险对接</span></div>
+      <div class="svc-body"><span class="en-inline">We work alongside your international insurer throughout your treatment — preparing documentation, liaising on direct billing, and supporting your claim process.</span><span class="zh-inline">全程协助与您的国际保险公司对接，准备理赔材料、协商直付安排，确保您的保险权益得到充分保障。</span></div>
+      <div class="svc-price"><span class="en-inline">Included in case management</span><span class="zh-inline">含于全程管理服务中</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="section-tag"><span class="en-inline">How It Works</span><span class="zh-inline">服务流程</span></div>
+  <h2 class="section-title" style="color:var(--white)">
+    <span class="en-block">From first contact to <em>full recovery</em></span>
+    <span class="zh-block">从初次接触到<em>康复出院</em></span>
+  </h2>
+  <p class="section-body" style="color:rgba(255,255,255,0.5)">
+    <span class="en-inline">A structured, transparent process so you always know exactly where you stand — before, during, and after treatment.</span>
+    <span class="zh-inline">清晰透明的服务流程，让您在治疗前、治疗中和治疗后始终掌握全局。</span>
+  </p>
+  <div class="process-steps">
+    <div class="process-step">
+      <div class="step-dot">I</div>
+      <div class="step-title"><span class="en-inline">Initial Assessment</span><span class="zh-inline">初步评估</span></div>
+      <div class="step-body"><span class="en-inline">Share your medical records. We evaluate your case within 48 hours and advise on the optimal specialist pathway.</span><span class="zh-inline">提供病历资料，我们在48小时内完成评估，为您推荐最适合的专家方向。</span></div>
+    </div>
+    <div class="process-step">
+      <div class="step-dot">II</div>
+      <div class="step-title"><span class="en-inline">Expert Matching</span><span class="zh-inline">专家匹配</span></div>
+      <div class="step-body"><span class="en-inline">We identify and secure an appointment with Shanghai's most appropriate specialist for your exact condition.</span><span class="zh-inline">精准匹配最适合您病情的上海权威专家，并完成优先预约。</span></div>
+    </div>
+    <div class="process-step">
+      <div class="step-dot">III</div>
+      <div class="step-title"><span class="en-inline">Arrival Planning</span><span class="zh-inline">来沪安排</span></div>
+      <div class="step-body"><span class="en-inline">We prepare your full itinerary: appointment schedule, visa letter support, accommodation guidance, and pre-arrival briefing.</span><span class="zh-inline">全面规划来沪行程：就诊安排、签证材料、住宿建议及到达前情况说明。</span></div>
+    </div>
+    <div class="process-step">
+      <div class="step-dot">IV</div>
+      <div class="step-title"><span class="en-inline">In-Hospital Care</span><span class="zh-inline">全程陪诊</span></div>
+      <div class="step-body"><span class="en-inline">Your coordinator accompanies you throughout — every consultation, examination, and procedure, translating and advocating at every step.</span><span class="zh-inline">专属协调员全程陪同每次门诊、检查和手术，实时翻译，全程维护您的权益。</span></div>
+    </div>
+    <div class="process-step">
+      <div class="step-dot">V</div>
+      <div class="step-title"><span class="en-inline">Discharge & Follow-up</span><span class="zh-inline">出院与随访</span></div>
+      <div class="step-body"><span class="en-inline">Full bilingual medical summary, coordination with your home physician, insurance claim support, and scheduled follow-up.</span><span class="zh-inline">提供中英文完整病历摘要，对接回国医生，协助保险理赔，安排后续随访。</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOSPITALS -->
+<section id="hospitals">
+  <div class="hospitals-intro">
+    <div>
+      <div class="section-tag"><span class="en-inline">Our Network</span><span class="zh-inline">我们的医院网络</span></div>
+      <h2 class="section-title">
+        <span class="en-block">Every leading hospital in <em>Shanghai</em></span>
+        <span class="zh-block"><em>上海所有</em>顶级公立医院</span>
+      </h2>
+      <p class="section-body">
+        <span class="en-inline">Unlike services tied to a single institution, MediLink operates across the full spectrum of Shanghai's Class-A tertiary public hospitals — ensuring you reach the center of excellence most suited to your condition.</span>
+        <span class="zh-inline">沪医通不局限于单一医院，而是覆盖上海所有公立三甲医院，确保您始终被引导至最适合您病情的顶级诊疗中心。</span>
+      </p>
+    </div>
+    <p class="section-body">
+      <span class="en-inline">Shanghai's top public hospitals rank alongside the finest medical institutions in the world, particularly in neurology, oncology, cardiovascular surgery, orthopedics, and rare disease management.</span>
+      <span class="zh-inline">上海顶级公立医院在神经科、肿瘤科、心血管外科、骨科及罕见病诊治等领域位居世界前列，专家团队持续引领临床研究与治疗创新。</span>
+    </p>
+  </div>
+  <div class="hospitals-grid">
+    <div class="hospital-card">
+      <div class="hosp-icon"></div>
+      <div class="hosp-name"><span class="en-inline">Huashan Hospital</span><span class="zh-inline">华山医院</span></div>
+      <div class="hosp-spec"><span class="en-inline">Neurology · Neurosurgery · Infectious Disease</span><span class="zh-inline">神经内外科 · 感染科</span></div>
+    </div>
+    <div class="hospital-card">
+      <div class="hosp-icon"></div>
+      <div class="hosp-name"><span class="en-inline">Ruijin Hospital</span><span class="zh-inline">瑞金医院</span></div>
+      <div class="hosp-spec"><span class="en-inline">Hematology · Endocrinology · Cardiology</span><span class="zh-inline">血液科 · 内分泌科 · 心内科</span></div>
+    </div>
+    <div class="hospital-card">
+      <div class="hosp-icon"></div>
+      <div class="hosp-name"><span class="en-inline">Zhongshan Hospital</span><span class="zh-inline">中山医院</span></div>
+      <div class="hosp-spec"><span class="en-inline">Liver Cancer · Cardiovascular · Pulmonology</span><span class="zh-inline">肝癌 · 心血管 · 呼吸科</span></div>
+    </div>
+    <div class="hospital-card">
+      <div class="hosp-icon"></div>
+      <div class="hosp-name"><span class="en-inline">Renji Hospital</span><span class="zh-inline">仁济医院</span></div>
+      <div class="hosp-spec"><span class="en-inline">Rheumatology · Oncology · Urology</span><span class="zh-inline">风湿科 · 肿瘤科 · 泌尿科</span></div>
+    </div>
+    <div class="hospital-card">
+      <div class="hosp-icon"></div>
+      <div class="hosp-name"><span class="en-inline">Xinhua Hospital</span><span class="zh-inline">新华医院</span></div>
+      <div class="hosp-spec"><span class="en-inline">Pediatrics · ENT · Neonatology</span><span class="zh-inline">儿科 · 耳鼻喉科 · 新生儿科</span></div>
+    </div>
+    <div class="hospital-card">
+      <div class="hosp-icon"></div>
+      <div class="hosp-name"><span class="en-inline">Shanghai Chest Hospital</span><span class="zh-inline">上海市胸科医院</span></div>
+      <div class="hosp-spec"><span class="en-inline">Thoracic Surgery · Lung Cancer · Cardiology</span><span class="zh-inline">胸外科 · 肺癌 · 心脏科</span></div>
+    </div>
+    <div class="hospital-card">
+      <div class="hosp-icon"></div>
+      <div class="hosp-name"><span class="en-inline">No. 9 People's Hospital</span><span class="zh-inline">第九人民医院</span></div>
+      <div class="hosp-spec"><span class="en-inline">Plastic Surgery · Orthopedics · Stomatology</span><span class="zh-inline">整形外科 · 骨科 · 口腔科</span></div>
+    </div>
+    <div class="hospital-card">
+      <div class="hosp-icon"></div>
+      <div class="hosp-name"><span class="en-inline">+ All Major Centers</span><span class="zh-inline">+ 全部主要三甲医院</span></div>
+      <div class="hosp-spec"><span class="en-inline">Full network across Shanghai's tertiary system</span><span class="zh-inline">覆盖上海完整公立三甲医疗网络</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <div>
+      <div class="section-tag"><span class="en-inline">Get in Touch</span><span class="zh-inline">联系我们</span></div>
+      <h2 class="section-title">
+        <span class="en-block">Begin your <em>consultation</em></span>
+        <span class="zh-block">开始您的<em>免费咨询</em></span>
+      </h2>
+      <p class="section-body">
+        <span class="en-inline">Share your case with us. Our team will review your situation and respond within 48 hours with an honest assessment of how we can help.</span>
+        <span class="zh-inline">向我们描述您的病情。我们的团队将在48小时内评估您的情况，并诚实地告知我们能为您做什么。</span>
+      </p>
+      <div class="contact-details">
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div>
+            <div class="contact-label"><span class="en-inline">Email</span><span class="zh-inline">邮箱</span></div>
+            <div class="contact-value">contact@medilink-shanghai.com</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div>
+            <div class="contact-label">WhatsApp / WeChat</div>
+            <div class="contact-value"><span class="en-inline">Available upon initial contact</span><span class="zh-inline">初次联系后提供</span></div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <div class="contact-label"><span class="en-inline">Response Time</span><span class="zh-inline">响应时间</span></div>
+            <div class="contact-value"><span class="en-inline">Within 48 hours · English & Mandarin</span><span class="zh-inline">48小时内回复 · 中英文均可</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form class="contact-form" onsubmit="handleSubmit(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label"><span class="en-inline">Full Name</span><span class="zh-inline">姓名</span></label>
+          <input class="form-input" type="text" placeholder="Your name / 您的姓名" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="en-inline">Nationality</span><span class="zh-inline">国籍</span></label>
+          <input class="form-input" type="text" placeholder="e.g. Australian / 澳大利亚">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label"><span class="en-inline">Email Address</span><span class="zh-inline">电子邮箱</span></label>
+        <input class="form-input" type="email" placeholder="your@email.com" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label"><span class="en-inline">Service of Interest</span><span class="zh-inline">感兴趣的服务</span></label>
+        <select class="form-select form-input">
+          <option value=""><span class="en-inline">Select a service...</span></option>
+          <option value="complex"><span class="en-inline">Complex Case Management</span> / 疑难病例全程管理</option>
+          <option value="specialist"><span class="en-inline">Expert Specialist Access</span> / 顶级专家通道</option>
+          <option value="second">Second Opinion / 第二诊疗意见</option>
+          <option value="corporate">Corporate Health Program / 企业员工医疗</option>
+          <option value="referral">International Referral / 海外转诊合作</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label"><span class="en-inline">Brief Description of Your Case</span><span class="zh-inline">病情简述</span></label>
+        <textarea class="form-textarea" placeholder="Please describe your medical situation... / 请描述您的病情和就诊需求，所有信息严格保密。"></textarea>
+      </div>
+      <p class="form-note">
+        <span class="en-inline">All information shared is strictly confidential and used solely to assess how we can best assist you.</span>
+        <span class="zh-inline">您提供的所有信息严格保密，仅用于评估我们如何为您提供最佳帮助。</span>
+      </p>
+      <button type="submit" class="form-submit">
+        <span class="en-inline">Submit Inquiry →</span>
+        <span class="zh-inline">提交咨询 →</span>
+      </button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <span class="footer-logo-name">MediLink Shanghai · 沪医通</span>
+    <span class="footer-logo-sub">SHANGHAI · CHINA</span>
+  </div>
+  <div class="footer-copy">
+    <span class="en-inline">© 2025 MediLink Shanghai. Medical coordination services — not a licensed medical provider.</span>
+    <span class="zh-inline">© 2025 沪医通 MediLink Shanghai. 医疗协调服务机构，非持牌医疗机构。</span>
+  </div>
+</footer>
+
+<script>
+  function setLang(lang) {
+    document.body.className = 'lang-' + lang;
+    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector('.lang-btn[onclick="setLang(\'' + lang + '\')"]').classList.add('active');
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.form-submit');
+    const isZh = document.body.classList.contains('lang-zh');
+    btn.textContent = isZh ? '提交成功 ✓' : 'Message Sent ✓';
+    btn.style.background = '#4a9e6b';
+    btn.style.color = '#fff';
+    btn.disabled = true;
+  }
+
+  // Subtle parallax
+  document.addEventListener('mousemove', function(e) {
+    const circle = document.querySelector('.hero-circle');
+    if (!circle) return;
+    const x = (e.clientX / window.innerWidth - 0.5) * 20;
+    const y = (e.clientY / window.innerHeight - 0.5) * 20;
+    circle.style.transform = `translateY(calc(-50% + ${y}px)) translateX(${x}px)`;
+  });
+</script>
+</body>
+</html>
